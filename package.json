@@ -1,8 +1,8 @@
 {
   "name": "browser-record",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Record browser session and send them to a backend",
-  "main": "src/record.js",
+  "main": "dist/record.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d dist"
