@@ -2,16 +2,27 @@
   "name": "browser-record.js",
   "version": "0.1.2",
   "description": "Record browser session and send them to a backend",
-  "main": "dist/record.js",
+  "main": "dist/browser-record.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src -d dist"
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "repl": "cross-env TS_NODE_CACHE=false TS_NODE_FILES=true ts-node scripts/repl.ts"
   },
   "author": "Dylan Huang",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
-    "@babel/core": "^7.5.4",
-    "@babel/preset-env": "^7.5.4"
+    "@types/inquirer": "^6.0.3",
+    "@types/puppeteer": "^1.12.4",
+    "cross-env": "^5.2.0",
+    "inquirer": "^6.5.0",
+    "puppeteer": "^1.18.1",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {
+    "rrweb": "^0.7.18"
   }
 }
