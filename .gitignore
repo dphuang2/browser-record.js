@@ -140,6 +140,3 @@ tags
 [._]*.un~
 
 # End of https://www.gitignore.io/api/vim,node,macos
-
-# User should run 'npm run build' to generate this file
-dist/
