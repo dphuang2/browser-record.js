@@ -9,7 +9,6 @@ import * as path from 'path';
 import * as EventEmitter from 'events';
 import * as inquirer from 'inquirer';
 import * as puppeteer from 'puppeteer';
-import { record, Replayer } from 'rrweb';
 
 import { eventWithTime } from 'rrweb/typings/types';
 
