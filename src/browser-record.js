@@ -1,11 +1,5 @@
 import { record, Replayer } from 'rrweb';
 
-class Test {
-  constructor() {
-    console.log('test');
-  }
-}
-
 function constructPayload(events) {
   return JSON.stringify({
       events,
