@@ -10,8 +10,6 @@ function constructPayload(events) {
 function init() {
   let events = [];
 
-  var test = new Test;
-
   record({
     emit(event) {
       events.push(event);
