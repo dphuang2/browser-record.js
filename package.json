@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --env prod",
-    "dev": "webpack --env dev --watch",
+    "dev": "concurrently \"http-server\" \"webpack --env dev --watch\"",
     "repl": "cross-env TS_NODE_CACHE=false TS_NODE_FILES=true ts-node scripts/repl.ts",
     "replay": "http-server"
   },
@@ -23,6 +23,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-regenerator": "^6.26.0",
+    "concurrently": "^4.1.1",
     "cross-env": "^5.2.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",

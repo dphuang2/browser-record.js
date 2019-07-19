@@ -1,47 +1,53 @@
+/* eslint class-methods-use-this: ["error", { "exceptMethods": ["lastActive", "id"] }] */
 import uuid from 'uuid/v4';
 import store from 'store-js';
-import cookie from 'cookie';
 
 const SESSION_ID_KEY = 'session-id';
-const EXPIRE_WINDOW = 600 * 1000; // 10 minutes
+const LAST_ACTIVE_KEY = 'session-last-active';
+const LAST_ACTIVE_WINDOW_MIN = 30; // 30 minutes
 
 class Session {
-  /*
-   *This class defines a session and its metadata
-   */
+  // This class defines a session. It automatically updates the id if we are in
+  // a new session. The only thing the client needs to do is retrieve the id
+  // member variable.
   constructor() {
-    const previousSession = this.getCookie(SESSION_ID_KEY);
-    if (previousSession) {
-      this.uuid = previousSession;
-      const previousExpire = store.getExpiration(SESSION_ID_KEY);
-      store.set(
-        SESSION_ID_KEY,
-        previousSession,
-        previousExpire + EXPIRE_WINDOW,
-      );
+    this.update();
+  }
+
+  get lastActive() {
+    return store.get(LAST_ACTIVE_KEY);
+  }
+
+  set lastActive(time) {
+    store.set(LAST_ACTIVE_KEY, time);
+  }
+
+  get id() {
+    // This line is crucial to how this class works. It guarantees that the id
+    // of the session is either unchanged or renewed based on the last activity
+    // whenever the id is retrieved
+    this.update();
+
+    return store.get(SESSION_ID_KEY);
+  }
+
+  set id(id) {
+    store.set(SESSION_ID_KEY, id);
+  }
+
+  update() {
+    if (this.isNewSession()) {
+      this.lastActive = Date.now();
+      this.id = uuid();
     } else {
-      store.set(SESSION_ID_KEY, uuid(), Date.now() + EXPIRE_WINDOW);
+      this.lastActive = Date.now();
     }
   }
 
-  static getCookie(key) {
-    const cookies = cookie.parse(document.cookie);
-    if (key in cookies) return cookies[key];
-    return null;
-  }
-
-  static setCookie(key, value, expire) {
-    document.cookie = cookie.serialize(key, value, {
-      expires: expire,
-    });
-  }
-
-  static updateExpire() {
-    store.set(
-      SESSION_ID_KEY,
-      store.get(SESSION_ID_KEY),
-      store.getExpiration(SESSION_ID_KEY) + EXPIRE_WINDOW,
-    );
+  isNewSession() {
+    const { lastActive } = this;
+    const now = Date.now();
+    return !lastActive || (now - lastActive) / 1000 / 60 >= LAST_ACTIVE_WINDOW_MIN;
   }
 }
 

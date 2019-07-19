@@ -1,9 +1,9 @@
-export function constructPayload(events, uuid) {
+export function constructPayload(events, sessionID) {
   return {
     events,
     timestamp: Date.now(),
     shop: Shopify.shop,
-    sessionID: uuid,
+    sessionID,
   };
 }
 

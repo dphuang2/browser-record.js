@@ -13,11 +13,10 @@ record({
   },
 });
 
-setTimeout(() => {
-  const payload = constructPayload(events, session.uuid);
+setInterval(() => {
+  const payload = constructPayload(events, session.id);
   events = [];
   sendPayload(payload);
-  session.updateExpire();
 }, SEND_DATA_INTERVAL);
 
 export { record, Replayer };
