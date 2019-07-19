@@ -3,31 +3,44 @@
   "version": "0.1.4",
   "description": "Record browser session and send them to a backend",
   "main": "dist/br.min.js",
-  "module": "src/browser-record.js",
+  "module": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "dev": "webpack --watch",
+    "build": "webpack --env prod",
+    "dev": "webpack --env dev --watch",
     "repl": "cross-env TS_NODE_CACHE=false TS_NODE_FILES=true ts-node scripts/repl.ts",
     "replay": "http-server"
   },
   "author": "Dylan Huang",
   "license": "ISC",
+  "apiProd": "'http://localhost:3000'",
+  "apiDev": "'http://localhost:3000/api/events.js'",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@types/inquirer": "^6.0.3",
     "@types/puppeteer": "^1.12.4",
     "babel-loader": "^8.0.6",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "babel-plugin-transform-regenerator": "^6.26.0",
     "cross-env": "^5.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-plugin-import": "^2.18.0",
     "http-server": "^0.11.1",
     "inquirer": "^6.5.0",
+    "prettier": "^1.18.2",
     "puppeteer": "^1.18.1",
-    "rrweb": "^0.7.18",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3",
+    "ua-parser-js": "^0.7.20",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.6"
   },
-  "dependencies": {}
+  "dependencies": {
+    "cookie": "^0.4.0",
+    "rrweb": "^0.7.18",
+    "store-js": "^2.0.4",
+    "uuid": "^3.3.2"
+  }
 }
