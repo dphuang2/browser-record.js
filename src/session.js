@@ -1,6 +1,6 @@
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["lastActive", "id"] }] */
 import uuid from 'uuid/v4';
-import store from 'store-js';
+import { storage } from './utils';
 
 const SESSION_ID_KEY = 'session-id';
 const LAST_ACTIVE_KEY = 'session-last-active';
@@ -15,11 +15,11 @@ class Session {
   }
 
   get lastActive() {
-    return store.get(LAST_ACTIVE_KEY);
+    return storage.getItem(LAST_ACTIVE_KEY);
   }
 
   set lastActive(time) {
-    store.set(LAST_ACTIVE_KEY, time);
+    storage.setItem(LAST_ACTIVE_KEY, time);
   }
 
   get id() {
@@ -28,11 +28,11 @@ class Session {
     // whenever the id is retrieved
     this.update();
 
-    return store.get(SESSION_ID_KEY);
+    return storage.getItem(SESSION_ID_KEY);
   }
 
   set id(id) {
-    store.set(SESSION_ID_KEY, id);
+    storage.setItem(SESSION_ID_KEY, id);
   }
 
   update() {
