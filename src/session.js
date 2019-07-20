@@ -36,12 +36,8 @@ class Session {
   }
 
   update() {
-    if (this.isNewSession()) {
-      this.lastActive = Date.now();
-      this.id = uuid();
-    } else {
-      this.lastActive = Date.now();
-    }
+    if (this.isNewSession()) this.id = uuid();
+    this.lastActive = Date.now();
   }
 
   isNewSession() {
