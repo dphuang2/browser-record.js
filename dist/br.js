@@ -2496,7 +2496,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var SEND_DATA_INTERVAL = 3 * 1000; // 5 seconds
+var SEND_DATA_INTERVAL = 5 * 1000; // 5 seconds
 
 var EVENTS_THRESHOLD = 10; // Reduce lambda invocations
 
