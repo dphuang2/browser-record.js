@@ -4,6 +4,7 @@
   "description": "Record browser session and send them to a backend",
   "main": "dist/br.min.js",
   "module": "src/index.js",
+  "sideEffects": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --env prod",
