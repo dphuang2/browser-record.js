@@ -12,8 +12,6 @@ const config = {
     library: 'br',
     libraryTarget: 'umd',
   },
-  // always in production cause we can use our local source file to debug
-  mode: 'production',
   // for debugging minified file
   devtool: 'source-map',
   // allows es6 type javascript syntax
@@ -35,16 +33,22 @@ const config = {
 };
 
 module.exports = (env, argv) => {
-  // Inject API host dynamically based on environment
+  // Development / production behavior
   let apiHost;
-  if (env === 'prod') { apiHost = pkg.apiProd; } else apiHost = pkg.apiDev;
+  if (env === 'prod') {
+    apiHost = pkg.apiProd;
+    config.output.filename = `${config.output.library}.min.js`;
+    config.mode = 'production';
+  } else {
+    apiHost = pkg.apiDev;
+    config.output.filename = `${config.output.library}.js`;
+    config.mode = 'development';
+  }
   config.plugins.push(
     new webpack.DefinePlugin({
       __API__: apiHost,
     }),
   );
 
-  // dynamic logic using config variable constants
-  config.output.filename = `${config.output.library}.min.js`;
   return config;
 };
