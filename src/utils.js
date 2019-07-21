@@ -9,7 +9,7 @@ export function constructPayload(events, id) {
 
 export function sendPayload(payload) {
   const body = JSON.stringify(payload);
-  fetch('__API__/sessions', {
+  fetch(`${__API__}/sessions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
