@@ -7,9 +7,7 @@ const LAST_ACTIVE_KEY = 'session-last-active';
 const LAST_ACTIVE_WINDOW_MIN = 30; // 30 minutes
 
 class Session {
-  // This class defines a session. It automatically updates the id if we are in
-  // a new session. The only thing the client needs to do is retrieve the id
-  // member variable.
+  // This class defines the delimitation of sessions
   constructor() {
     this.update();
   }
@@ -23,11 +21,6 @@ class Session {
   }
 
   get id() {
-    // This line is crucial to how this class works. It guarantees that the id
-    // of the session is either unchanged or renewed based on the last activity
-    // whenever the id is retrieved
-    this.update();
-
     return storage.getItem(SESSION_ID_KEY);
   }
 

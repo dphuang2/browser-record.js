@@ -17,6 +17,7 @@ if (storage) {
   });
 
   setInterval(() => {
+    session.update();
     if (events.length < EVENTS_THRESHOLD) return;
     const payload = constructPayload(events, session.id);
     events = [];
