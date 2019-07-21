@@ -15,7 +15,7 @@
   "author": "Dylan Huang",
   "license": "ISC",
   "apiProd": "'http://localhost:3000'",
-  "apiDev": "'http://localhost:3000/api/sessions.js'",
+  "apiDev": "'http://localhost:3000/sessions'",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
