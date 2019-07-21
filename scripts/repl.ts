@@ -15,7 +15,7 @@ import { eventWithTime } from 'rrweb/typings/types';
 const emitter = new EventEmitter();
 
 function getCode(): string {
-  const bundlePath = path.resolve(__dirname, '../dist/br.min.js');
+  const bundlePath = path.resolve(__dirname, '../node_modules/rrweb/dist/rrweb.min.js');
   return fs.readFileSync(bundlePath, 'utf8');
 }
 
@@ -98,7 +98,7 @@ function getCode(): string {
     });
     await page.evaluate(`;${code}
       window.__IS_RECORDING__ = true
-      br.record({
+      rrweb.record({
         emit: event => window._replLog(event)
       });
     `);
@@ -107,7 +107,7 @@ function getCode(): string {
       if (!isRecording) {
         await page.evaluate(`;${code}
           window.__IS_RECORDING__ = true
-          br.record({
+          rrweb.record({
             emit: event => window._replLog(event)
           });
         `);
@@ -139,7 +139,7 @@ function getCode(): string {
     });
     await page.evaluate(`${code}
       const events = ${JSON.stringify(events)};
-      const replayer = new br.Replayer(events);
+      const replayer = new rrweb.Replayer(events);
       replayer.play();
     `);
   }
@@ -167,7 +167,7 @@ function getCode(): string {
     <link rel="stylesheet" href="../node_modules/rrweb/dist/rrweb.min.css" />
   </head>
   <body>
-  <script src="../dist/br.min.js"></script>
+  <script src="../dist/rrweb.min.js"></script>
     <script>
       /*<!--*/
       const events = ${JSON.stringify(events).replace(
@@ -175,7 +175,7 @@ function getCode(): string {
         '<\\/script>',
       )};
       /*-->*/
-      const replayer = new br.Replayer(events);
+      const replayer = new rrweb.Replayer(events);
       replayer.play();
     </script>
   </body>
