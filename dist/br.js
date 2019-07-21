@@ -2622,7 +2622,7 @@ function constructPayload(events, id) {
 }
 function sendPayload(payload) {
   var body = JSON.stringify(payload);
-  fetch('http://localhost:3000/api/sessions.js', {
+  fetch('http://localhost:3000/sessions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
