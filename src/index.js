@@ -10,7 +10,8 @@ const EVENTS_THRESHOLD = 10; // Reduce lambda invocations
 const session = new Session();
 let events = [];
 
-// We only want to track users who support local storage
+// We only want to track users who support local storage and pages that qualify
+// as a Shopify app
 if (storage && isShopifyApp()) {
   record({
     emit(event) {
