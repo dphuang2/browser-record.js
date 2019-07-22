@@ -32,3 +32,7 @@ function testStorage() {
 }
 // This is undefined if localStorage is not supported
 export const storage = testStorage();
+
+export function isShopifyApp() {
+  return (typeof Shopify) !== 'undefined';
+}
