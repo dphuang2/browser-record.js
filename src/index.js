@@ -5,7 +5,6 @@ import {
   constructEventsPayload,
   isTrackableUser,
   sendBrowserInfo,
-  isShopifyApp,
 } from './utils';
 
 const SEND_DATA_INTERVAL = 5 * 1000; // 5 seconds
@@ -18,7 +17,7 @@ let events = [];
 function init() {
   // We only want to track users who support local storage the proper APIs
   if (isTrackableUser()) {
-    if (isShopifyApp()) {
+    if ((typeof Shopify) !== 'undefined') {
       session.update();
       sendBrowserInfo(session.id);
 
@@ -36,11 +35,12 @@ function init() {
         sendPayload(payload);
       }, SEND_DATA_INTERVAL);
     } else {
-      // We don't know if the "Shopify" variable is going to be defined when we check
-      // it so we initialize on the event loop wait for any variable initalizations
-      // that happen on the stack. Refer to
+      // The "Shopify" variable might not be defined because it could
+      // intialized after our script is loaded it so we initialize on the event
+      // loop wait for any variable initalizations that happen on the stack.
+      // Refer to
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop for
-      // explanation.
+      // explanation on stack vs. event loop.
       setTimeout(init, RETRY_DELAY);
     }
   }

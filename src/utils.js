@@ -30,10 +30,6 @@ function testStorage() {
 // This is undefined if localStorage is not supported
 export const storage = testStorage();
 
-export function isShopifyApp() {
-  return (typeof Shopify) !== 'undefined';
-}
-
 export function isTrackableUser() {
   // We need the user to be on a Shopify store, support local storage, support
   // the navigator API, and support the navigator.sendBeacon function
