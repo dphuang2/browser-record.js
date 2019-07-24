@@ -1,4 +1,4 @@
-export function constructPayload(events, id) {
+export function constructEventsPayload(events, id) {
   return {
     events,
     timestamp: Date.now(),
@@ -7,15 +7,12 @@ export function constructPayload(events, id) {
   };
 }
 
+export function sendBrowserInfo(id) {
+  navigator.sendBeacon(`${__API__}/customers`, id);
+}
+
 export function sendPayload(payload) {
-  const body = JSON.stringify(payload);
-  fetch(`${__API__}/sessions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
+  navigator.sendBeacon(`${__API__}/sessions`, JSON.stringify(payload));
 }
 
 // Feature detect local storage
@@ -35,4 +32,13 @@ export const storage = testStorage();
 
 export function isShopifyApp() {
   return (typeof Shopify) !== 'undefined';
+}
+
+export function isTrackableUser() {
+  // We need the user to be on a Shopify store, support local storage, support
+  // the navigator API, and support the navigator.sendBeacon function
+  if (!storage) return false;
+  if (typeof (navigator) === 'undefined') return false;
+  if (typeof (navigator.sendBeacon) === 'undefined') return false;
+  return true;
 }
