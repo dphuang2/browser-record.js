@@ -16,7 +16,14 @@ export function sendBrowserInfo(id) {
 }
 
 export function sendPayload(payload) {
-  navigator.sendBeacon(`${__API__}/sessions`, JSON.stringify(payload));
+  const body = JSON.stringify(payload);
+  fetch(`${__API__}/sessions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body,
+  });
 }
 
 // Feature detect local storage
