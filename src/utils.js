@@ -8,7 +8,11 @@ export function constructEventsPayload(events, id) {
 }
 
 export function sendBrowserInfo(id) {
-  navigator.sendBeacon(`${__API__}/customers`, id);
+  const data = {
+    id,
+    shop: Shopify.shop,
+  };
+  navigator.sendBeacon(`${__API__}/customers`, JSON.stringify(data));
 }
 
 export function sendPayload(payload) {
