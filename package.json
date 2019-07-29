@@ -1,6 +1,6 @@
 {
   "name": "browser-record",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "Record browser session and send them to a backend",
   "main": "dist/br.min.js",
   "module": "src/index.js",
