@@ -7,7 +7,7 @@ import {
   sendBrowserInfo,
 } from './utils';
 
-const SEND_DATA_INTERVAL = 5 * 1000; // 5 seconds
+const SEND_DATA_INTERVAL = 3 * 1000; // 3 seconds
 const EVENTS_THRESHOLD = 10; // Reduce lambda invocations
 const RETRY_DELAY = 500; // 0.5 second
 
