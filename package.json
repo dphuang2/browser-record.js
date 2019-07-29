@@ -16,7 +16,7 @@
   "author": "Dylan Huang",
   "license": "ISC",
   "apiProd": "'https://browser-record-app.balphi.now.sh/api'",
-  "apiDev": "'http://localhost:3000/api'",
+  "apiDev": "'https://11191589.ngrok.io/api'",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
