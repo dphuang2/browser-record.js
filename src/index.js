@@ -7,12 +7,20 @@ import {
   sendBrowserInfo,
 } from './utils';
 
-const SEND_DATA_INTERVAL = 3 * 1000; // 3 seconds
-const EVENTS_THRESHOLD = 10; // Reduce lambda invocations
+const SEND_DATA_INTERVAL = 2 * 1000; // 2 seconds
+const EVENTS_MAX_THRESHOLD = 20; // Flush events when its too full
 const RETRY_DELAY = 500; // 0.5 second
 
 const session = new Session();
 let events = [];
+
+function flushEvents() {
+  if (events.length === 0) return;
+  session.update();
+  const payload = constructEventsPayload(events, session.id);
+  events = [];
+  sendPayload(payload);
+}
 
 function init() {
   // We only want to track users who support local storage the proper APIs
@@ -24,16 +32,11 @@ function init() {
       record({
         emit(event) {
           events.push(event);
+          if (events.length > EVENTS_MAX_THRESHOLD) { flushEvents(); }
         },
       });
 
-      setInterval(() => {
-        session.update();
-        if (events.length < EVENTS_THRESHOLD) return;
-        const payload = constructEventsPayload(events, session.id);
-        events = [];
-        sendPayload(payload);
-      }, SEND_DATA_INTERVAL);
+      setInterval(flushEvents, SEND_DATA_INTERVAL);
     } else {
       // The "Shopify" variable might not be defined because it could
       // intialized after our script is loaded it so we initialize on the event
