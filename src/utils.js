@@ -7,25 +7,33 @@ export function constructEventsPayload(events, id) {
   };
 }
 
-function sendInfo(endpoint, body, headers) {
+function sendInfoWithBeacon(endpoint, body) {
+  navigator.sendBeacon(`${__API__}${endpoint}`, JSON.stringify(body));
+}
+
+function sendInfoWithFetch(endpoint, body) {
   fetch(`${__API__}${endpoint}`, {
     method: 'POST',
-    headers,
     body: JSON.stringify(body),
   });
 }
 
 export function sendBrowserInfo(id) {
-  sendInfo('/customers', {
+  sendInfoWithFetch('/customers', {
     id,
     shop: Shopify.shop,
-  }, {});
+  });
 }
 
 export function sendPayload(payload) {
-  sendInfo('/sessions', payload, {
-    'Content-Type': 'application/json',
-  });
+  sendInfoWithFetch('/sessions', payload);
+}
+
+export function sendPayloadWithBeacon(payload) {
+  sendInfoWithBeacon(
+    '/sessions',
+    payload,
+  );
 }
 
 // Feature detect local storage
@@ -46,5 +54,7 @@ export const storage = testStorage();
 export function isTrackableUser() {
   // We need the user to support local storage
   if (!storage) return false;
+  if (!navigator) return false;
+  if (!navigator.sendBeacon) return false;
   return true;
 }

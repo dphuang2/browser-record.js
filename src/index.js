@@ -5,6 +5,7 @@ import {
   constructEventsPayload,
   isTrackableUser,
   sendBrowserInfo,
+  sendPayloadWithBeacon,
 } from './utils';
 
 const SEND_DATA_INTERVAL = 2 * 1000; // 2 seconds
@@ -32,15 +33,26 @@ function init() {
       record({
         emit(event) {
           events.push(event);
-          if (events.length > EVENTS_MAX_THRESHOLD) { flushEvents(); }
+          if (events.length > EVENTS_MAX_THRESHOLD || event.type === 2) {
+            flushEvents();
+          }
         },
       });
 
       setInterval(flushEvents, SEND_DATA_INTERVAL);
+
+      window.addEventListener('pagehide', () => {
+        if (events.length === 0) return;
+        session.update();
+        sendPayloadWithBeacon(constructEventsPayload(
+          events,
+          session.id,
+        ));
+      }, false);
     } else {
       // The "Shopify" variable might not be defined because it could
-      // intialized after our script is loaded it so we initialize on the event
-      // loop wait for any variable initalizations that happen on the stack.
+      // intialized after our script is loaded it so we initialize by using the event
+      // loop until the "Shopify" variable is initialized.
       // Refer to
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop for
       // explanation on stack vs. event loop.
