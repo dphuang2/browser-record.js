@@ -167,7 +167,7 @@ function getCode(): string {
     <link rel="stylesheet" href="../node_modules/rrweb/dist/rrweb.min.css" />
   </head>
   <body>
-  <script src="../dist/rrweb.min.js"></script>
+    <script src="../node_modules/rrweb/dist/rrweb.min.js"></script>
     <script>
       /*<!--*/
       const events = ${JSON.stringify(events).replace(
@@ -177,6 +177,12 @@ function getCode(): string {
       /*-->*/
       const replayer = new rrweb.Replayer(events);
       replayer.play();
+      console.log((events[events.length - 1].timestamp - events[0].timestamp) / 1000, ' seconds');
+      function printTime() {
+        console.log(replayer.timer.timeOffset + replayer.getTimeOffset());
+        window.requestAnimationFrame(printTime);
+      }
+      printTime();
     </script>
   </body>
 </html>  
