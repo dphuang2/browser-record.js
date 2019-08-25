@@ -39,7 +39,7 @@
     "webpack-cli": "^3.3.6"
   },
   "dependencies": {
-    "rrweb": "^0.7.18",
+    "rrweb": "^0.7.23",
     "uuid": "^3.3.2"
   }
 }
