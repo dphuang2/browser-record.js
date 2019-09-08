@@ -18,7 +18,7 @@ let events = [];
 
 function flushEvents() {
   if (events.length === 0) return;
-  const payload = constructEventsPayload(events, session.id);
+  const payload = constructEventsPayload(events, session);
   events = [];
   sendPayload(payload);
 }
@@ -45,7 +45,7 @@ function init() {
       if (events.length === 0) return;
       sendPayloadWithBeacon(constructEventsPayload(
         events,
-        session.id,
+        session,
       ));
     }, false);
   } else {

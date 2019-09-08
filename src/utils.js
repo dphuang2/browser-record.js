@@ -1,9 +1,11 @@
-export function constructEventsPayload(events, id) {
+export function constructEventsPayload(events, session) {
+  const mostRecentEvent = events[events.length - 1];
   return {
     events,
     timestamp: Date.now(),
     shop: Shopify.shop,
-    id,
+    id: session.id,
+    sessionDuration: mostRecentEvent.timestamp - session.startTime,
   };
 }
 

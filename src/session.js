@@ -4,12 +4,21 @@ import { storage } from './utils';
 
 const SESSION_ID_KEY = 'session-id';
 const LAST_ACTIVE_KEY = 'session-last-active';
+const START_TIME_KEY = 'session-start-time';
 const LAST_ACTIVE_WINDOW_MIN = 30; // 30 minutes
 
 class Session {
   // This class defines the delimitation of sessions
   constructor() {
     this.update();
+  }
+
+  get startTime() {
+    return storage.getItem(START_TIME_KEY);
+  }
+
+  set startTime(time) {
+    storage.setItem(START_TIME_KEY, time);
   }
 
   get lastActive() {
@@ -29,7 +38,10 @@ class Session {
   }
 
   update() {
-    if (this.isNewSession()) this.id = uuid();
+    if (this.isNewSession()) {
+      this.id = uuid();
+      this.startTime = Date.now();
+    }
     this.lastActive = Date.now();
   }
 
