@@ -5,7 +5,7 @@ export function constructEventsPayload(events, session) {
     timestamp: Date.now(),
     shop: Shopify.shop,
     id: session.id,
-    duration: mostRecentEvent.timestamp - session.startTime,
+    sessionDuration: mostRecentEvent.timestamp - session.startTime,
   };
 }
 
