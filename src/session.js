@@ -40,7 +40,6 @@ class Session {
   update() {
     if (this.isNewSession()) {
       this.id = uuid();
-      this.startTime = Date.now();
     }
     this.lastActive = Date.now();
   }
