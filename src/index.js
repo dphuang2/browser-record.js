@@ -42,7 +42,7 @@ function init() {
       flushEvents();
     }, SEND_DATA_INTERVAL);
 
-    window.addEventListener('pagehide', () => {
+    window.addEventListener('unload', () => {
       if (events.length === 0) return;
       sendPayloadWithBeacon(constructEventsPayload(
         events,
