@@ -15,7 +15,7 @@
   },
   "author": "Dylan Huang",
   "license": "ISC",
-  "apiProd": "'https://browser-record-app.balphi.now.sh/api'",
+  "apiProd": "'https://rewind-app.now.sh/api'",
   "apiDev": "'http://localhost:3000/api'",
   "devDependencies": {
     "@babel/core": "^7.5.5",
