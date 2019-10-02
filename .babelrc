@@ -1,9 +1,11 @@
 {
   "presets": [["@babel/preset-env", {
-    "modules": false
+    "modules": false,
+    "useBuiltIns": false
   }]],
   "plugins": [
     "syntax-async-functions",
-    "transform-regenerator"
+    "transform-regenerator",
+    "@babel/plugin-transform-runtime"
   ]
 }

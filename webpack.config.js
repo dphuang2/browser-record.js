@@ -4,7 +4,10 @@ const pkg = require('./package.json');
 
 const config = {
   // master source file
-  entry: path.resolve(__dirname, pkg.module),
+  entry: {
+    'br': path.resolve(__dirname, pkg.module),
+    '../test/chrome-extension/br': path.resolve(__dirname, pkg.module)
+  },
   // settings for output logic
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -34,11 +37,11 @@ module.exports = (env, argv) => {
   let apiHost;
   if (env === 'prod') {
     apiHost = pkg.apiProd;
-    config.output.filename = `${config.output.library}.min.js`;
+    config.output.filename = `[name].min.js`;
     config.mode = 'production';
   } else {
     apiHost = pkg.apiDev;
-    config.output.filename = `${config.output.library}.js`;
+    config.output.filename = `[name].js`;
     config.mode = 'development';
   }
   config.plugins.push(

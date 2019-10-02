@@ -6,12 +6,13 @@ import {
   isTrackableUser,
   sendBrowserInfo,
   sendPayloadWithBeacon,
+  initCartIntercepts,
 } from './utils';
 
 const SEND_DATA_INTERVAL = 3 * 1000; // 2 seconds
 const EVENTS_MAX_THRESHOLD = 100; // Flush events when its too full
 const RETRY_DELAY = 500; // 0.5 second
-const RECORDING_FLAG = 'BR_IS_RECORDING';
+const RECORDING_FLAG = 'LOOPR_ENABLED';
 
 const session = new Session();
 let events = [];
@@ -23,10 +24,14 @@ function flushEvents() {
   sendPayload(payload);
 }
 
+function handleCartResponse(response) {
+  console.log(response);
+}
+
 function init() {
   if ((typeof Shopify) !== 'undefined') {
     sendBrowserInfo(session.id);
-
+    initCartIntercepts(handleCartResponse);
     record({
       emit(event) {
         events.push(event);
@@ -38,7 +43,7 @@ function init() {
     });
 
     setInterval(() => {
-      session.update();
+      session.updateUUIDAndLastActive();
       flushEvents();
     }, SEND_DATA_INTERVAL);
 

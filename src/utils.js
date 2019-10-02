@@ -1,3 +1,5 @@
+const CART_AJAX_API_URL = '/cart.js';
+
 export function constructEventsPayload(events, session) {
   const mostRecentEvent = events[events.length - 1];
   return {
@@ -18,6 +20,48 @@ function sendInfoWithFetch(endpoint, body) {
     method: 'POST',
     body: JSON.stringify(body),
   });
+}
+
+/**
+ * This function's purpose is the intercept fetch responses
+ * @param {*} urlmatch the substring match for intercepting the request
+ * @param {*} callback the function to execute when a match is found
+ */
+function initInterceptFetch(urlmatch, callback) {
+  const fetch = window.fetch;
+  window.fetch = (...args) => (async (args) => {
+    var response = await fetch(...args);
+    if (response.url.includes(urlmatch)) {
+      callback(response.clone());
+    }
+    return response;
+  })(args);
+}
+
+/**
+ * This function's purpose is the intercept AJAX responses
+ * @param {*} urlmatch the substring match for intercepting the request
+ * @param {*} callback the function to execute when a match is found
+ */
+function initInterceptAjax(urlmatch, callback) {
+  let send = XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.send = function () {
+    this.addEventListener('readystatechange', function () {
+      if (this.responseURL.includes(urlmatch) && this.readyState === 4) {
+        callback(this);
+      }
+    }, false);
+    send.apply(this, arguments);
+  };
+};
+
+/**
+ * This function initializes the intercepts for the cart.js API
+ * @param {*} callback function to call when fetch or AJAX is intercepted
+ */
+export function initCartIntercepts(callback) {
+  initInterceptAjax(CART_AJAX_API_URL, callback);
+  initInterceptFetch(CART_AJAX_API_URL, callback);
 }
 
 export function sendBrowserInfo(id) {
