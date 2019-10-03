@@ -3883,9 +3883,15 @@ module.exports = v4;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var rrweb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rrweb */ "./node_modules/rrweb/es/rrweb.js");
-/* harmony import */ var _session__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./session */ "./src/session.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var rrweb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rrweb */ "./node_modules/rrweb/es/rrweb.js");
+/* harmony import */ var _session__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./session */ "./src/session.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+
+
 
 
 
@@ -3896,25 +3902,72 @@ var EVENTS_MAX_THRESHOLD = 100; // Flush events when its too full
 var RETRY_DELAY = 500; // 0.5 second
 
 var RECORDING_FLAG = 'LOOPR_ENABLED';
-var session = new _session__WEBPACK_IMPORTED_MODULE_1__["default"]();
+var session = new _session__WEBPACK_IMPORTED_MODULE_3__["default"]();
 var events = [];
 
 function flushEvents() {
   if (events.length === 0) return;
-  var payload = Object(_utils__WEBPACK_IMPORTED_MODULE_2__["constructEventsPayload"])(events, session);
+  var payload = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["constructEventsPayload"])(events, session);
   events = [];
-  Object(_utils__WEBPACK_IMPORTED_MODULE_2__["sendPayload"])(payload);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_4__["sendPayload"])(payload);
 }
 
-function handleCartResponse(response) {
-  console.log(response);
+function handleCartJSON(json) {
+  var total_price = json.total_price,
+      item_count = json.item_count;
+  session.updateCartData(total_price, item_count);
+}
+
+function handleCartResponse(_x) {
+  return _handleCartResponse.apply(this, arguments);
+}
+
+function _handleCartResponse() {
+  _handleCartResponse = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+  /*#__PURE__*/
+  _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(response) {
+    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            if (!(response instanceof XMLHttpRequest)) {
+              _context.next = 4;
+              break;
+            }
+
+            handleCartJSON(JSON.parse(response.response));
+            _context.next = 10;
+            break;
+
+          case 4:
+            if (!(response instanceof Response)) {
+              _context.next = 10;
+              break;
+            }
+
+            _context.t0 = handleCartJSON;
+            _context.next = 8;
+            return response.json();
+
+          case 8:
+            _context.t1 = _context.sent;
+            (0, _context.t0)(_context.t1);
+
+          case 10:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
+  return _handleCartResponse.apply(this, arguments);
 }
 
 function init() {
   if (typeof Shopify !== 'undefined') {
-    Object(_utils__WEBPACK_IMPORTED_MODULE_2__["sendBrowserInfo"])(session.id);
-    Object(_utils__WEBPACK_IMPORTED_MODULE_2__["initCartIntercepts"])(handleCartResponse);
-    Object(rrweb__WEBPACK_IMPORTED_MODULE_0__["record"])({
+    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["sendBrowserInfo"])(session.id);
+    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["initCartIntercepts"])(handleCartResponse);
+    Object(rrweb__WEBPACK_IMPORTED_MODULE_2__["record"])({
       emit: function emit(event) {
         events.push(event);
         if (!session.startTime) session.startTime = event.timestamp;
@@ -3930,7 +3983,7 @@ function init() {
     }, SEND_DATA_INTERVAL);
     window.addEventListener('unload', function () {
       if (events.length === 0) return;
-      Object(_utils__WEBPACK_IMPORTED_MODULE_2__["sendPayloadWithBeacon"])(Object(_utils__WEBPACK_IMPORTED_MODULE_2__["constructEventsPayload"])(events, session));
+      Object(_utils__WEBPACK_IMPORTED_MODULE_4__["sendPayloadWithBeacon"])(Object(_utils__WEBPACK_IMPORTED_MODULE_4__["constructEventsPayload"])(events, session));
     }, false);
   } else {
     // The "Shopify" variable might not be defined because it could
@@ -3944,7 +3997,7 @@ function init() {
 } // We only want to track users who support local storage the proper APIs
 
 
-if (Object(_utils__WEBPACK_IMPORTED_MODULE_2__["isTrackableUser"])()) {
+if (Object(_utils__WEBPACK_IMPORTED_MODULE_4__["isTrackableUser"])()) {
   if (!window[RECORDING_FLAG]) {
     // Initialize our app
     init();
@@ -3985,6 +4038,10 @@ var MAX_TOTAL_CART_PRICE_KEY = 'max-total-cart-price';
 var MAX_ITEM_COUNT_KEY = 'max-item-count';
 var LAST_ACTIVE_WINDOW_MIN = 30; // 30 minutes
 
+function isNullOrNaN(obj) {
+  return obj == null || isNaN(obj);
+}
+
 var Session =
 /*#__PURE__*/
 function () {
@@ -3993,13 +4050,25 @@ function () {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Session);
 
     this.updateUUIDAndLastActive();
-    this.lastTotalCartPrice = 0;
-    this.lastItemCount = 0;
-    this.maxTotalCartPrice = 0;
-    this.maxItemCount = 0;
+    this.lastTotalCartPrice = isNullOrNaN(this.lastTotalCartPrice) ? 0 : this.lastTotalCartPrice;
+    this.lastItemCount = isNullOrNaN(this.lastItemCount) ? 0 : this.lastItemCount;
+    this.maxTotalCartPrice = isNullOrNaN(this.maxTotalCartPrice) ? 0 : this.maxTotalCartPrice;
+    this.maxItemCount = isNullOrNaN(this.maxItemCount) ? 0 : this.maxItemCount;
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Session, [{
+    key: "updateCartData",
+    value: function updateCartData(totalCartPrice, itemCount) {
+      if (isNaN(totalCartPrice) || isNaN(itemCount)) {
+        return;
+      }
+
+      this.lastItemCount = itemCount;
+      this.lastTotalCartPrice = totalCartPrice;
+      this.maxItemCount = Math.max(itemCount, this.maxItemCount);
+      this.maxTotalCartPrice = Math.max(totalCartPrice, this.maxTotalCartPrice);
+    }
+  }, {
     key: "updateUUIDAndLastActive",
     value: function updateUUIDAndLastActive() {
       if (this.isNewSession()) {
@@ -4105,7 +4174,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var CART_AJAX_API_URL = '/cart.js';
+var CART_AJAX_API_URL_BASE = '/cart';
+var CART_AJAX_API_URL = '.js';
+var CART_UPDATE_AJAX_API_URL = '/update.js';
+var CART_CHANGE_AJAX_API_URL = '/change.js';
+var CART_CLEAR_AJAX_API_URL = '/clear.js';
 function constructEventsPayload(events, session) {
   var mostRecentEvent = events[events.length - 1];
   return {
@@ -4113,7 +4186,11 @@ function constructEventsPayload(events, session) {
     timestamp: Date.now(),
     shop: Shopify.shop,
     id: session.id,
-    sessionDuration: (mostRecentEvent.timestamp - session.startTime) / 1000
+    sessionDuration: (mostRecentEvent.timestamp - session.startTime) / 1000,
+    lastTotalCartPrice: session.lastTotalCartPrice,
+    lastItemCount: session.lastItemCount,
+    maxTotalCartPrice: session.maxTotalCartPrice,
+    maxItemCount: session.maxItemCount
   };
 }
 
@@ -4127,14 +4204,23 @@ function sendInfoWithFetch(endpoint, body) {
     body: JSON.stringify(body)
   });
 }
+
+function urlMatchesCartResponseURL(url) {
+  if (url.includes(CART_AJAX_API_URL_BASE)) {
+    if (url.endsWith(CART_AJAX_API_URL) || url.endsWith(CART_UPDATE_AJAX_API_URL) || url.endsWith(CART_CHANGE_AJAX_API_URL) || url.endsWith(CART_CLEAR_AJAX_API_URL)) {
+      return true;
+    }
+  }
+
+  return false;
+}
 /**
  * This function's purpose is the intercept fetch responses
- * @param {*} urlmatch the substring match for intercepting the request
  * @param {*} callback the function to execute when a match is found
  */
 
 
-function initInterceptFetch(urlmatch, callback) {
+function initInterceptFetch(callback) {
   var fetch = window.fetch;
 
   window.fetch = function () {
@@ -4157,7 +4243,7 @@ function initInterceptFetch(urlmatch, callback) {
               case 2:
                 response = _context.sent;
 
-                if (response.url.includes(urlmatch)) {
+                if (urlMatchesCartResponseURL(response.url)) {
                   callback(response.clone());
                 }
 
@@ -4179,17 +4265,16 @@ function initInterceptFetch(urlmatch, callback) {
 }
 /**
  * This function's purpose is the intercept AJAX responses
- * @param {*} urlmatch the substring match for intercepting the request
  * @param {*} callback the function to execute when a match is found
  */
 
 
-function initInterceptAjax(urlmatch, callback) {
+function initInterceptAjax(callback) {
   var send = XMLHttpRequest.prototype.send;
 
   XMLHttpRequest.prototype.send = function () {
     this.addEventListener('readystatechange', function () {
-      if (this.responseURL.includes(urlmatch) && this.readyState === 4) {
+      if (urlMatchesCartResponseURL(this.responseURL) && this.readyState === 4) {
         callback(this);
       }
     }, false);
@@ -4204,8 +4289,8 @@ function initInterceptAjax(urlmatch, callback) {
  */
 
 function initCartIntercepts(callback) {
-  initInterceptAjax(CART_AJAX_API_URL, callback);
-  initInterceptFetch(CART_AJAX_API_URL, callback);
+  initInterceptAjax(callback);
+  initInterceptFetch(callback);
 }
 function sendBrowserInfo(id) {
   sendInfoWithFetch('/customers', {
