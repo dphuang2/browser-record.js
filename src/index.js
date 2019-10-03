@@ -24,8 +24,17 @@ function flushEvents() {
   sendPayload(payload);
 }
 
-function handleCartResponse(response) {
-  console.log(response);
+function handleCartJSON(json) {
+  const { total_price, item_count } = json;
+  session.updateCartData(total_price, item_count);
+}
+
+async function handleCartResponse(response) {
+  if (response instanceof XMLHttpRequest) {
+    handleCartJSON(JSON.parse(response.response))
+  } else if (response instanceof Response) {
+    handleCartJSON(await response.json());
+  }
 }
 
 function init() {

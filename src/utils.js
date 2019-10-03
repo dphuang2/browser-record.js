@@ -1,4 +1,8 @@
-const CART_AJAX_API_URL = '/cart.js';
+const CART_AJAX_API_URL_BASE = '/cart';
+const CART_AJAX_API_URL = '.js';
+const CART_UPDATE_AJAX_API_URL = '/update.js';
+const CART_CHANGE_AJAX_API_URL = '/change.js';
+const CART_CLEAR_AJAX_API_URL = '/clear.js';
 
 export function constructEventsPayload(events, session) {
   const mostRecentEvent = events[events.length - 1];
@@ -8,6 +12,10 @@ export function constructEventsPayload(events, session) {
     shop: Shopify.shop,
     id: session.id,
     sessionDuration: (mostRecentEvent.timestamp - session.startTime) / 1000,
+    lastTotalCartPrice: session.lastTotalCartPrice,
+    lastItemCount: session.lastItemCount,
+    maxTotalCartPrice: session.maxTotalCartPrice,
+    maxItemCount: session.maxItemCount,
   };
 }
 
@@ -22,16 +30,27 @@ function sendInfoWithFetch(endpoint, body) {
   });
 }
 
+function urlMatchesCartResponseURL(url) {
+  if (url.includes(CART_AJAX_API_URL_BASE)) {
+    if (url.endsWith(CART_AJAX_API_URL) ||
+      url.endsWith(CART_UPDATE_AJAX_API_URL) ||
+      url.endsWith(CART_CHANGE_AJAX_API_URL) ||
+      url.endsWith(CART_CLEAR_AJAX_API_URL)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * This function's purpose is the intercept fetch responses
- * @param {*} urlmatch the substring match for intercepting the request
  * @param {*} callback the function to execute when a match is found
  */
-function initInterceptFetch(urlmatch, callback) {
+function initInterceptFetch(callback) {
   const fetch = window.fetch;
   window.fetch = (...args) => (async (args) => {
     var response = await fetch(...args);
-    if (response.url.includes(urlmatch)) {
+    if (urlMatchesCartResponseURL(response.url)) {
       callback(response.clone());
     }
     return response;
@@ -40,14 +59,13 @@ function initInterceptFetch(urlmatch, callback) {
 
 /**
  * This function's purpose is the intercept AJAX responses
- * @param {*} urlmatch the substring match for intercepting the request
  * @param {*} callback the function to execute when a match is found
  */
-function initInterceptAjax(urlmatch, callback) {
+function initInterceptAjax(callback) {
   let send = XMLHttpRequest.prototype.send;
   XMLHttpRequest.prototype.send = function () {
     this.addEventListener('readystatechange', function () {
-      if (this.responseURL.includes(urlmatch) && this.readyState === 4) {
+      if (urlMatchesCartResponseURL(this.responseURL) && this.readyState === 4) {
         callback(this);
       }
     }, false);
@@ -60,8 +78,8 @@ function initInterceptAjax(urlmatch, callback) {
  * @param {*} callback function to call when fetch or AJAX is intercepted
  */
 export function initCartIntercepts(callback) {
-  initInterceptAjax(CART_AJAX_API_URL, callback);
-  initInterceptFetch(CART_AJAX_API_URL, callback);
+  initInterceptAjax(callback);
+  initInterceptFetch(callback);
 }
 
 export function sendBrowserInfo(id) {

@@ -11,14 +11,18 @@ const MAX_TOTAL_CART_PRICE_KEY = 'max-total-cart-price';
 const MAX_ITEM_COUNT_KEY = 'max-item-count';
 const LAST_ACTIVE_WINDOW_MIN = 30; // 30 minutes
 
+function isNullOrNaN(obj) {
+  return obj == null || isNaN(obj);
+}
+
 class Session {
   // This class defines the delimitation of sessions
   constructor() {
     this.updateUUIDAndLastActive();
-    this.lastTotalCartPrice = 0;
-    this.lastItemCount = 0;
-    this.maxTotalCartPrice = 0;
-    this.maxItemCount = 0;
+    this.lastTotalCartPrice = isNullOrNaN(this.lastTotalCartPrice) ? 0 : this.lastTotalCartPrice;
+    this.lastItemCount = isNullOrNaN(this.lastItemCount) ? 0 : this.lastItemCount;
+    this.maxTotalCartPrice = isNullOrNaN(this.maxTotalCartPrice) ? 0 : this.maxTotalCartPrice;
+    this.maxItemCount = isNullOrNaN(this.maxItemCount) ? 0 : this.maxItemCount;
   }
 
   get maxItemCount() { return storage.getItem(MAX_ITEM_COUNT_KEY); }
@@ -41,6 +45,16 @@ class Session {
 
   get id() { return storage.getItem(SESSION_ID_KEY); }
   set id(id) { storage.setItem(SESSION_ID_KEY, id); }
+
+  updateCartData(totalCartPrice, itemCount) {
+    if (isNaN(totalCartPrice) || isNaN(itemCount)) {
+      return;
+    }
+    this.lastItemCount = itemCount;
+    this.lastTotalCartPrice = totalCartPrice;
+    this.maxItemCount = Math.max(itemCount, this.maxItemCount);
+    this.maxTotalCartPrice = Math.max(totalCartPrice, this.maxTotalCartPrice);
+  }
 
   updateUUIDAndLastActive() {
     if (this.isNewSession()) {
