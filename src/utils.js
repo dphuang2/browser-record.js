@@ -73,6 +73,10 @@ function initInterceptAjax(callback) {
   };
 };
 
+export function makeCartAjaxRequest() {
+  fetch('/cart.js');
+}
+
 /**
  * This function initializes the intercepts for the cart.js API
  * @param {*} callback function to call when fetch or AJAX is intercepted

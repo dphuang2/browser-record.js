@@ -1,6 +1,6 @@
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["lastActive", "id"] }] */
 import uuid from 'uuid/v4';
-import { storage } from './utils';
+import { storage, makeCartAjaxRequest } from './utils';
 
 const SESSION_ID_KEY = 'session-id';
 const LAST_ACTIVE_KEY = 'session-last-active';
@@ -48,6 +48,13 @@ class Session {
 
   updateCartData(totalCartPrice, itemCount) {
     if (isNaN(totalCartPrice) || isNaN(itemCount)) {
+      /**
+       * In the case that the data returned does not yield and updated cart
+       * values, lets make a manual request to the /cart.js endpoint to get a
+       * proper Cart JSON object that we can update our session member variables
+       * with
+       */
+      makeCartAjaxRequest();
       return;
     }
     this.lastItemCount = itemCount;

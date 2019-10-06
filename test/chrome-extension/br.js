@@ -4060,6 +4060,13 @@ function () {
     key: "updateCartData",
     value: function updateCartData(totalCartPrice, itemCount) {
       if (isNaN(totalCartPrice) || isNaN(itemCount)) {
+        /**
+         * In the case that the data returned does not yield and updated cart
+         * values, lets make a manual request to the /cart.js endpoint to get a
+         * proper Cart JSON object that we can update our session member variables
+         * with
+         */
+        Object(_utils__WEBPACK_IMPORTED_MODULE_3__["makeCartAjaxRequest"])();
         return;
       }
 
@@ -4153,12 +4160,13 @@ function () {
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: constructEventsPayload, initCartIntercepts, sendBrowserInfo, sendPayload, sendPayloadWithBeacon, storage, isTrackableUser */
+/*! exports provided: constructEventsPayload, makeCartAjaxRequest, initCartIntercepts, sendBrowserInfo, sendPayload, sendPayloadWithBeacon, storage, isTrackableUser */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "constructEventsPayload", function() { return constructEventsPayload; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeCartAjaxRequest", function() { return makeCartAjaxRequest; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initCartIntercepts", function() { return initCartIntercepts; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sendBrowserInfo", function() { return sendBrowserInfo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sendPayload", function() { return sendPayload; });
@@ -4283,6 +4291,9 @@ function initInterceptAjax(callback) {
 }
 
 ;
+function makeCartAjaxRequest() {
+  fetch('/cart.js');
+}
 /**
  * This function initializes the intercepts for the cart.js API
  * @param {*} callback function to call when fetch or AJAX is intercepted
