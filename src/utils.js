@@ -8,14 +8,17 @@ export function constructEventsPayload(events, session) {
   const mostRecentEvent = events[events.length - 1];
   return {
     events,
-    timestamp: Date.now(),
+    timestamp: Date.now(), // To order the chunks
     shop: Shopify.shop,
     id: session.id,
+    startTime: session.startTime,
     sessionDuration: (mostRecentEvent.timestamp - session.startTime) / 1000,
     lastTotalCartPrice: session.lastTotalCartPrice,
     lastItemCount: session.lastItemCount,
     maxTotalCartPrice: session.maxTotalCartPrice,
     maxItemCount: session.maxItemCount,
+    numClicks: session.numClicks,
+    pageLoads: session.numPageLoads,
   };
 }
 
@@ -72,6 +75,10 @@ function initInterceptAjax(callback) {
     send.apply(this, arguments);
   };
 };
+
+export function initClickIntercepts(callback) {
+  document.addEventListener('click', callback, false);
+}
 
 export function makeCartAjaxRequest() {
   fetch('/cart.js');

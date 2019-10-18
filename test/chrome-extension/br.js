@@ -3963,10 +3963,16 @@ function _handleCartResponse() {
   return _handleCartResponse.apply(this, arguments);
 }
 
+function handleNewClick(event) {
+  session.numClicks = Number(session.numClicks) + 1;
+}
+
 function init() {
   if (typeof Shopify !== 'undefined') {
     Object(_utils__WEBPACK_IMPORTED_MODULE_4__["sendBrowserInfo"])(session.id);
     Object(_utils__WEBPACK_IMPORTED_MODULE_4__["initCartIntercepts"])(handleCartResponse);
+    Object(_utils__WEBPACK_IMPORTED_MODULE_4__["initClickIntercepts"])(handleNewClick);
+    session.numPageLoads = Number(session.numPageLoads) + 1;
     Object(rrweb__WEBPACK_IMPORTED_MODULE_2__["record"])({
       emit: function emit(event) {
         events.push(event);
@@ -4036,10 +4042,35 @@ var LAST_TOTAL_CART_PRICE_KEY = 'last-total-cart-price';
 var LAST_ITEM_COUNT_KEY = 'last-item-count';
 var MAX_TOTAL_CART_PRICE_KEY = 'max-total-cart-price';
 var MAX_ITEM_COUNT_KEY = 'max-item-count';
+var NUM_CLICKS_KEY = 'num-clicks';
+var PAGE_LOADS_KEY = 'page-loads';
 var LAST_ACTIVE_WINDOW_MIN = 30; // 30 minutes
 
 function isNullOrNaN(obj) {
   return obj == null || isNaN(obj);
+}
+
+String.prototype.hashCode = function () {
+  var hash = 0,
+      i,
+      chr;
+  if (this.length === 0) return hash;
+
+  for (i = 0; i < this.length; i++) {
+    chr = this.charCodeAt(i);
+    hash = (hash << 5) - hash + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return hash;
+};
+
+function _get(key) {
+  return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(key.hashCode());
+}
+
+function _set(key, val) {
+  return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(key.hashCode(), val);
 }
 
 var Session =
@@ -4054,6 +4085,8 @@ function () {
     this.lastItemCount = isNullOrNaN(this.lastItemCount) ? 0 : this.lastItemCount;
     this.maxTotalCartPrice = isNullOrNaN(this.maxTotalCartPrice) ? 0 : this.maxTotalCartPrice;
     this.maxItemCount = isNullOrNaN(this.maxItemCount) ? 0 : this.maxItemCount;
+    this.numPageLoads = isNullOrNaN(this.numPageLoads) ? 0 : this.numPageLoads;
+    this.numClicks = isNullOrNaN(this.numClicks) ? 0 : this.numClicks;
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Session, [{
@@ -4092,60 +4125,76 @@ function () {
       return !lastActive || (now - lastActive) / 1000 / 60 >= LAST_ACTIVE_WINDOW_MIN;
     }
   }, {
+    key: "numPageLoads",
+    get: function get() {
+      return _get(PAGE_LOADS_KEY);
+    },
+    set: function set(numPageLoads) {
+      _set(PAGE_LOADS_KEY, numPageLoads);
+    }
+  }, {
+    key: "numClicks",
+    get: function get() {
+      return _get(NUM_CLICKS_KEY);
+    },
+    set: function set(numClicks) {
+      _set(NUM_CLICKS_KEY, numClicks);
+    }
+  }, {
     key: "maxItemCount",
     get: function get() {
-      return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(MAX_ITEM_COUNT_KEY);
+      return _get(MAX_ITEM_COUNT_KEY);
     },
     set: function set(count) {
-      _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(MAX_ITEM_COUNT_KEY, count);
+      _set(MAX_ITEM_COUNT_KEY, count);
     }
   }, {
     key: "maxTotalCartPrice",
     get: function get() {
-      return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(MAX_TOTAL_CART_PRICE_KEY);
+      return _get(MAX_TOTAL_CART_PRICE_KEY);
     },
     set: function set(price) {
-      _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(MAX_TOTAL_CART_PRICE_KEY, price);
+      _set(MAX_TOTAL_CART_PRICE_KEY, price);
     }
   }, {
     key: "lastItemCount",
     get: function get() {
-      return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(LAST_ITEM_COUNT_KEY);
+      return _get(LAST_ITEM_COUNT_KEY);
     },
     set: function set(count) {
-      _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(LAST_ITEM_COUNT_KEY, count);
+      _set(LAST_ITEM_COUNT_KEY, count);
     }
   }, {
     key: "lastTotalCartPrice",
     get: function get() {
-      return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(LAST_TOTAL_CART_PRICE_KEY);
+      return _get(LAST_TOTAL_CART_PRICE_KEY);
     },
     set: function set(price) {
-      _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(LAST_TOTAL_CART_PRICE_KEY, price);
+      _set(LAST_TOTAL_CART_PRICE_KEY, price);
     }
   }, {
     key: "startTime",
     get: function get() {
-      return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(START_TIME_KEY);
+      return _get(START_TIME_KEY);
     },
     set: function set(time) {
-      _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(START_TIME_KEY, time);
+      _set(START_TIME_KEY, time);
     }
   }, {
     key: "lastActive",
     get: function get() {
-      return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(LAST_ACTIVE_KEY);
+      return _get(LAST_ACTIVE_KEY);
     },
     set: function set(time) {
-      _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(LAST_ACTIVE_KEY, time);
+      _set(LAST_ACTIVE_KEY, time);
     }
   }, {
     key: "id",
     get: function get() {
-      return _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].getItem(SESSION_ID_KEY);
+      return _get(SESSION_ID_KEY);
     },
     set: function set(id) {
-      _utils__WEBPACK_IMPORTED_MODULE_3__["storage"].setItem(SESSION_ID_KEY, id);
+      _set(SESSION_ID_KEY, id);
     }
   }]);
 
@@ -4160,12 +4209,13 @@ function () {
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: constructEventsPayload, makeCartAjaxRequest, initCartIntercepts, sendBrowserInfo, sendPayload, sendPayloadWithBeacon, storage, isTrackableUser */
+/*! exports provided: constructEventsPayload, initClickIntercepts, makeCartAjaxRequest, initCartIntercepts, sendBrowserInfo, sendPayload, sendPayloadWithBeacon, storage, isTrackableUser */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "constructEventsPayload", function() { return constructEventsPayload; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initClickIntercepts", function() { return initClickIntercepts; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeCartAjaxRequest", function() { return makeCartAjaxRequest; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initCartIntercepts", function() { return initCartIntercepts; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sendBrowserInfo", function() { return sendBrowserInfo; });
@@ -4192,13 +4242,17 @@ function constructEventsPayload(events, session) {
   return {
     events: events,
     timestamp: Date.now(),
+    // To order the chunks
     shop: Shopify.shop,
     id: session.id,
+    startTime: session.startTime,
     sessionDuration: (mostRecentEvent.timestamp - session.startTime) / 1000,
     lastTotalCartPrice: session.lastTotalCartPrice,
     lastItemCount: session.lastItemCount,
     maxTotalCartPrice: session.maxTotalCartPrice,
-    maxItemCount: session.maxItemCount
+    maxItemCount: session.maxItemCount,
+    numClicks: session.numClicks,
+    pageLoads: session.numPageLoads
   };
 }
 
@@ -4291,6 +4345,9 @@ function initInterceptAjax(callback) {
 }
 
 ;
+function initClickIntercepts(callback) {
+  document.addEventListener('click', callback, false);
+}
 function makeCartAjaxRequest() {
   fetch('/cart.js');
 }

@@ -7,6 +7,7 @@ import {
   sendBrowserInfo,
   sendPayloadWithBeacon,
   initCartIntercepts,
+  initClickIntercepts,
 } from './utils';
 
 const SEND_DATA_INTERVAL = 3 * 1000; // 2 seconds
@@ -37,10 +38,16 @@ async function handleCartResponse(response) {
   }
 }
 
+function handleNewClick(event) {
+  session.numClicks = Number(session.numClicks) + 1;
+}
+
 function init() {
   if ((typeof Shopify) !== 'undefined') {
     sendBrowserInfo(session.id);
     initCartIntercepts(handleCartResponse);
+    initClickIntercepts(handleNewClick);
+    session.numPageLoads = Number(session.numPageLoads) + 1;
     record({
       emit(event) {
         events.push(event);
