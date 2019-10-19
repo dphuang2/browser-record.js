@@ -39,13 +39,15 @@ function set(key, val) {
 class Session {
   // This class defines the delimitation of sessions
   constructor() {
-    this.updateUUIDAndLastActive();
+    this.updateSession();
     this.lastTotalCartPrice = isNullOrNaN(this.lastTotalCartPrice) ? 0 : this.lastTotalCartPrice;
     this.lastItemCount = isNullOrNaN(this.lastItemCount) ? 0 : this.lastItemCount;
     this.maxTotalCartPrice = isNullOrNaN(this.maxTotalCartPrice) ? 0 : this.maxTotalCartPrice;
     this.maxItemCount = isNullOrNaN(this.maxItemCount) ? 0 : this.maxItemCount;
-    this.numPageLoads = isNullOrNaN(this.numPageLoads) ? 0 : this.numPageLoads;
     this.numClicks = isNullOrNaN(this.numClicks) ? 0 : this.numClicks;
+    this.numPageLoads = isNullOrNaN(this.numPageLoads) ? 0 : this.numPageLoads;
+    this.numPageLoads = Number(this.numPageLoads) + 1;
+    if (!this.startTime) this.startTime = Date.now();
   }
 
   get numPageLoads() { return get(PAGE_LOADS_KEY); }
@@ -101,9 +103,16 @@ class Session {
     this.maxTotalCartPrice = Math.max(totalCartPrice, this.maxTotalCartPrice);
   }
 
-  updateUUIDAndLastActive() {
+  updateSession() {
     if (this.isNewSession()) {
       this.id = uuid();
+      this.startTime = Date.now();
+      this.lastTotalCartPrice = 0;
+      this.lastItemCount = 0;
+      this.maxTotalCartPrice = 0;
+      this.maxItemCount = 0;
+      this.numPageLoads = 0;
+      this.numClicks = 0;
     }
     this.lastActive = Date.now();
   }
@@ -111,7 +120,8 @@ class Session {
   isNewSession() {
     const { lastActive } = this;
     const now = Date.now();
-    return !lastActive || (now - lastActive) / 1000 / 60 >= LAST_ACTIVE_WINDOW_MIN;
+    const minutesSinceLastActive = (now - lastActive) / 1000 / 60;
+    return !lastActive || minutesSinceLastActive >= LAST_ACTIVE_WINDOW_MIN;
   }
 }
 

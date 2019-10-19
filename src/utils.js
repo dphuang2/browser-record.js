@@ -5,14 +5,13 @@ const CART_CHANGE_AJAX_API_URL = '/change.js';
 const CART_CLEAR_AJAX_API_URL = '/clear.js';
 
 export function constructEventsPayload(events, session) {
-  const mostRecentEvent = events[events.length - 1];
   return {
     events,
     timestamp: Date.now(), // To order the chunks
     shop: Shopify.shop,
     id: session.id,
     startTime: session.startTime,
-    sessionDuration: (mostRecentEvent.timestamp - session.startTime) / 1000,
+    sessionDuration: (Date.now() - session.startTime) / 1000,
     lastTotalCartPrice: session.lastTotalCartPrice,
     lastItemCount: session.lastItemCount,
     maxTotalCartPrice: session.maxTotalCartPrice,

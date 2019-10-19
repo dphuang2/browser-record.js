@@ -48,10 +48,10 @@ function init() {
     initCartIntercepts(handleCartResponse);
     initClickIntercepts(handleNewClick);
     session.numPageLoads = Number(session.numPageLoads) + 1;
+    if (!session.startTime) session.startTime = Date.now();
     record({
       emit(event) {
         events.push(event);
-        if (!session.startTime) session.startTime = event.timestamp;
         if (events.length > EVENTS_MAX_THRESHOLD || event.type === 2) {
           flushEvents();
         }
@@ -59,7 +59,7 @@ function init() {
     });
 
     setInterval(() => {
-      session.updateUUIDAndLastActive();
+      session.updateSession();
       flushEvents();
     }, SEND_DATA_INTERVAL);
 
