@@ -1,6 +1,6 @@
 {
   "name": "balphi",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Record browser session and send them to a backend",
   "main": "dist/br.min.js",
   "module": "src/index.js",
