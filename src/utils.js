@@ -33,12 +33,16 @@ function sendInfoWithFetch(endpoint, body) {
   });
 }
 
+function matchesEnd(string, prefix) {
+  return string.end(`${prefix}.*$`);
+}
+
 function urlMatchesCartResponseURL(url) {
   if (url.includes(CART_AJAX_API_URL_BASE)) {
-    if (url.endsWith(CART_AJAX_API_URL) ||
-      url.endsWith(CART_UPDATE_AJAX_API_URL) ||
-      url.endsWith(CART_CHANGE_AJAX_API_URL) ||
-      url.endsWith(CART_CLEAR_AJAX_API_URL)) {
+    if (matchesEnd(url, CART_AJAX_API_URL) ||
+      matchesEnd(url, CART_UPDATE_AJAX_API_URL) ||
+      matchesEnd(url, CART_CHANGE_AJAX_API_URL) ||
+      matchesEnd(url, CART_CLEAR_AJAX_API_URL)) {
       return true;
     }
   }
