@@ -47,8 +47,6 @@ function init() {
     sendBrowserInfo(session.id);
     initCartIntercepts(handleCartResponse);
     initClickIntercepts(handleNewClick);
-    session.numPageLoads = Number(session.numPageLoads) + 1;
-    if (!session.startTime) session.startTime = Date.now();
     record({
       emit(event) {
         events.push(event);
