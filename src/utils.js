@@ -34,7 +34,7 @@ function sendInfoWithFetch(endpoint, body) {
 }
 
 function matchesEnd(string, prefix) {
-  return string.end(`${prefix}.*$`);
+  return string.match(`${prefix}.*$`);
 }
 
 function urlMatchesCartResponseURL(url) {
